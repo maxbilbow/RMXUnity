@@ -41,6 +41,8 @@ namespace RMX
 		protected void Start() {
 			Physics2D.gravity = defaultGravity;
 			WillBeginEvent (Events.SingletonInitialization);
+			Bugger.Initialize ();
+			Notifications.Initialize ();
 			StartSingletons ();
 			#if MOBILE_INPUT
 			StartMobile();
@@ -50,6 +52,7 @@ namespace RMX
 			DidFinishEvent (Events.SingletonInitialization);
 			
 		}
+
 		protected abstract void StartSingletons ();
 		protected abstract void StartDesktop ();
 		protected abstract void StartMobile ();
@@ -63,6 +66,17 @@ namespace RMX
 
 	public abstract class ASettings<T> : Singletons.ASingleton<T> , ISettings
 	where T : ASettings<T> , ISettings {
+		public bool DebugMisc;
+		public bool DebugGameCenter;
+		public bool DebugAchievements;
+		public bool DebugExceptions;
+		public bool DebugSingletons;
+		public bool DebugGameDataLists;
+		public bool DebugDatabase;
+		public bool DebugPatches;
+		public bool DebugEvents;
+		public bool ClearAchievementsOnLoad;
+
 		public abstract bool PrintToScreen { get; set; }
 		public abstract TextAsset Database { get; }
 		public abstract bool IsDebugging(string feature);

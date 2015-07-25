@@ -95,8 +95,8 @@ namespace RMX
 			foreach (Log log in _lateLogs) {
 				try {
 					if (settings.IsDebugging(log.feature)) {
-						var message = TextFormatter.Format( log.feature + ": _LATE_ " + log.message);
-						Debug.Log(message);
+						var message = TextFormatter.Format(  ": _LATE_ " + log.message);
+						Debug.Log(new Log(log.feature, message));
 					}
 				} catch (Exception e) {
 					Debug.LogWarning(e.Message);
