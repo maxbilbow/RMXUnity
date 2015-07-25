@@ -79,9 +79,35 @@ namespace RMX
 
 		public abstract bool PrintToScreen { get; set; }
 		public abstract TextAsset Database { get; }
-		public abstract bool IsDebugging(string feature);
+
 		public abstract float MaxDisplayTime { get;}
 
+		public virtual bool IsDebugging(string feature){
+			if (Singletons.Settings != null) {
+				if (feature == Testing.Misc)
+					return DebugMisc;
+				else if (feature == Testing.GameCenter)
+					return DebugGameCenter;
+				else if (feature == Testing.Achievements)
+					return DebugAchievements;
+				else if (feature == Testing.Exceptions)
+					return DebugExceptions;
+				else if (feature == Testing.Singletons)
+					return DebugSingletons;
+				else if (feature == Testing.Patches)
+					return DebugPatches;
+				else if (feature == Testing.Database)
+					return DebugDatabase;
+				else if (feature == Testing.EventCenter)
+					return DebugEvents;
+				else
+					Debug.LogWarning (feature.ToString () + " has not been recorded in Settings.IsTesting(feature)");
+				return false;
+			} else {
+				Debug.LogWarning ("Setting not initialized so debugging anyway: " + feature);
+				return true;
+			}
+		}
 
 	}
 
