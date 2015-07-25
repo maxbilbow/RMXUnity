@@ -19,6 +19,7 @@ namespace RMX
 	public interface IGameController : ISingleton {
 		void PauseGame(bool pause);
 		void PauseGame (bool pause, object args);
+		void Patch();
 	}
 	public interface ISettings : ISingleton {
 		bool PrintToScreen { get; set; }
@@ -52,6 +53,7 @@ namespace RMX
 		protected abstract void StartSingletons ();
 		protected abstract void StartDesktop ();
 		protected abstract void StartMobile ();
+		public abstract void Patch ();
 		public void PauseGame(bool pause) {
 			PauseGame (pause, null);
 		}
@@ -191,8 +193,10 @@ namespace RMX
 
 
 			private void MainInitCheck() {
-				if (this is IGameController && _gameController == null) 
+				if (this is IGameController && _gameController == null) {
 					Singletons._gameController = this as IGameController;
+					_gameController.Patch();
+				}
 				else if (this is ISettings && _settings == null) 
 					Singletons._settings = this as ISettings;
 			 	else if (_gameController == null)
