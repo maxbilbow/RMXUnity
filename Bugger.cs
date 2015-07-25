@@ -207,7 +207,7 @@ namespace RMX
 				style.alignment = TextAnchor.LowerLeft;
 				style.padding.left = style.padding.right = style.padding.top = style.padding.bottom = 20;
 //				style.border
-				GUI.Label (new Rect (0, 0, Screen.width, Screen.height), text, style);
+				GUI.Label (new Rect (0, 0, Screen.width, Screen.height), Time.timeScale == 0 ? text : "<color=white>" + text + "</color>", style);
 			}
 		}
 

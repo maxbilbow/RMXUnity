@@ -77,6 +77,10 @@ namespace RMX
 		public bool DebugEvents;
 		public bool ClearAchievementsOnLoad;
 
+		public Font mainFont;
+		public Color backgroundColor = Color.black;
+		public Color textColor = Color.white;
+
 		public abstract bool PrintToScreen { get; set; }
 		public abstract TextAsset Database { get; }
 
