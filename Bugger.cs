@@ -11,6 +11,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Runtime;
+using System.Runtime.CompilerServices;
 
 namespace RMX
 {
@@ -31,7 +33,7 @@ namespace RMX
 
 	public class Bugger : Singletons.ASingleton<Bugger>
 	{
-		public struct Log {
+		struct Log {
 			public Log(string feature, string message) {
 				this.feature = feature;
 				this.message = message;
@@ -131,21 +133,26 @@ namespace RMX
 
 		}
 
-		public static Log StartNewLog(string feature) {
-			return StartNewLog (feature, "");
-		}
-
-		public static Log StartNewLog(string feature, string message) {
-			if (IsInitialized) {
-				return new Log (feature, message);
-			} else
-				throw new Exception ("Bugger must be initialized before StartNewLog(string feature, string message). Log is: \n" + feature + ": " + message);
-
-		}
+//		static Log StartNewLog(string feature) {
+//			return StartNewLog (feature, "");
+//		}
+//
+//	 	static Log StartNewLog(string feature, string message) {
+//			if (IsInitialized) {
+//				return new Log (feature, message);
+//			} else
+//				throw new Exception ("Bugger must be initialized before StartNewLog(string feature, string message). Log is: \n" + feature + ": " + message);
+//
+//		}
 	
-
+		private static string Stack(string message, int skip = 2) {
+			var sf = new System.Diagnostics.StackTrace(skip).GetFrame(0);
+			var file = sf.GetFileName(); var member = sf.GetMethod().Name; var line = sf.GetFileLineNumber();
+			return message + string.Format("\n<color=red> => {0}_{1}, line: {2} </color>", file, member, line);
+		}
 
 		public static bool WillLog(string feature, string message) {
+			message = Stack (message);
 			if (IsInitialized && Singletons.Settings != null) {
 				if (Singletons.Settings.IsDebugging (feature)) {
 					current._log = new Log (feature, message);

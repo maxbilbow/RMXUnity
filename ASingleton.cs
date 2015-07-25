@@ -41,14 +41,14 @@ namespace RMX
 		protected void Start() {
 			Physics2D.gravity = defaultGravity;
 			WillBeginEvent (Events.SingletonInitialization);
-			Bugger.Initialize ();
-			Notifications.Initialize ();
 			StartSingletons ();
 			#if MOBILE_INPUT
 			StartMobile();
 			#else
 			StartDesktop();
 			#endif
+			Bugger.Initialize ();
+			Notifications.Initialize ();
 			DidFinishEvent (Events.SingletonInitialization);
 			
 		}

@@ -63,7 +63,7 @@ namespace RMX
 			case Settings.Codify:
 				return codify(text, method);
 			default:
-				return Format (text, Settings.ForDebug, Method.CreateTags);
+				return Format (text, Settings.DebugAndCode, Method.CreateTags);
 			}
 		}
 	}
