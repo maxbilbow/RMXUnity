@@ -16,36 +16,6 @@ namespace RMX {
 	
 	public static class SavedData {
 
-//		private static Dictionary<string, object> _data = new Dictionary<string, object>() {
-//			{ UserData.NotFirstTime, SavedData.New(UserData.NotFirstTime) } 
-//		};
-	
-		public enum Floats {
-			// Saved Game Data
-			CurrentSession, CurrentProcrastination, TotalTime,
-			// Saved & Top Scores
-			LongestProctrastination,
-			// Top Scores
-			
-			PercentageOfDevTime
-		}
-		
-		public enum Bools {
-			// Achievements (time based)
-			AmeteurCrastinator, TimeWaster, Apathetic, SemiPro, Pro, 
-			// Achievements (Event Based)
-			MakingTime, OverTime, BigTime, NotFirstTime
-		}
-		
-		public enum Ints {
-			// Other System and Game Data
-			Version 
-			
-		}
-		
-
-	
-		
 		static object String(string key) {
 			return PlayerPrefs.HasKey(key) ? PlayerPrefs.GetString (key) : "";
 		}
