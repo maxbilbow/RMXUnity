@@ -14,15 +14,13 @@ using System.Reflection;
 
 namespace RMX
 {
-
+	
 
 	public interface IGameController : ISingleton {
-		void PauseGame(bool pause);
-		void PauseGame (bool pause, object args);
+		void PauseGame (bool pause, object args = null);
 		void Patch();
-	}
-	public interface ISettings : ISingleton {
-		bool PrintToScreen { get; set; }
+
+		bool DebugHUD { get; }
 		TextAsset Database { get; }
 		bool IsDebugging(string feature);
 		float MaxDisplayTime { get;}
@@ -35,85 +33,8 @@ namespace RMX
 		GameObject gameObject { get; }
 	}
 
-	public abstract class AGameController<T> : Singletons.ASingleton<T> , IGameController
-	where T : AGameController<T> , IGameController {
-		public Vector2 defaultGravity = new Vector2 (0f, -9.81f);
-		protected void Start() {
-			Physics2D.gravity = defaultGravity;
-			WillBeginEvent (Events.SingletonInitialization);
-			StartSingletons ();
-			#if MOBILE_INPUT
-			StartMobile();
-			#else
-			StartDesktop();
-			#endif
-			Bugger.Initialize ();
-			Notifications.Initialize ();
-			DidFinishEvent (Events.SingletonInitialization);
-			
-		}
 
-		protected abstract void StartSingletons ();
-		protected abstract void StartDesktop ();
-		protected abstract void StartMobile ();
-		public abstract void Patch ();
-		public void PauseGame(bool pause) {
-			PauseGame (pause, null);
-		}
 
-		public abstract void PauseGame (bool pause, object args);
-	}
-
-	public abstract class ASettings<T> : Singletons.ASingleton<T> , ISettings
-	where T : ASettings<T> , ISettings {
-		public bool DebugMisc;
-		public bool DebugGameCenter;
-		public bool DebugAchievements;
-		public bool DebugExceptions;
-		public bool DebugSingletons;
-		public bool DebugGameDataLists;
-		public bool DebugDatabase;
-		public bool DebugPatches;
-		public bool DebugEvents;
-		public bool ClearAchievementsOnLoad;
-
-		public Font mainFont;
-		public Color backgroundColor = Color.black;
-		public Color textColor = Color.white;
-
-		public abstract bool PrintToScreen { get; set; }
-		public abstract TextAsset Database { get; }
-
-		public abstract float MaxDisplayTime { get;}
-
-		public virtual bool IsDebugging(string feature){
-			if (Singletons.Settings != null) {
-				if (feature == Testing.Misc)
-					return DebugMisc;
-				else if (feature == Testing.GameCenter)
-					return DebugGameCenter;
-				else if (feature == Testing.Achievements)
-					return DebugAchievements;
-				else if (feature == Testing.Exceptions)
-					return DebugExceptions;
-				else if (feature == Testing.Singletons)
-					return DebugSingletons;
-				else if (feature == Testing.Patches)
-					return DebugPatches;
-				else if (feature == Testing.Database)
-					return DebugDatabase;
-				else if (feature == Testing.EventCenter)
-					return DebugEvents;
-				else
-					Debug.LogWarning (feature.ToString () + " has not been recorded in Settings.IsTesting(feature)");
-				return false;
-			} else {
-				Debug.LogWarning ("Setting not initialized so debugging anyway: " + feature);
-				return true;
-			}
-		}
-
-	}
 
 	public static class Singletons {
 
@@ -123,12 +44,7 @@ namespace RMX
 				return _gameController != null;//_gameControllerInitialized;
 			}
 		}
-//		static bool _settingsInitialized = false;
-		public static bool SettingsInitialized {
-			get {
-				return _settings != null;//_settingsInitialized;
-			}
-		}
+//		
 
 		static IGameController _gameController;
 	 	public static IGameController GameController {
@@ -136,10 +52,10 @@ namespace RMX
 				return _gameController;
 			}
 		}
-		static ISettings _settings;
-		public static ISettings Settings {
+
+		public static IGameController Settings {
 			get {
-				return _settings;
+				return _gameController;
 			}
 		}
 
@@ -173,9 +89,9 @@ namespace RMX
 				}
 			}
 	
-			protected virtual ISettings settings {
+			protected virtual IGameController settings {
 				get {
-					return _settings;
+					return _gameController;
 				}
 			}
 	
@@ -184,6 +100,8 @@ namespace RMX
 					if (IsInitialized) {
 						return _singleton as T;
 					} else {
+						if (typeof(T) is IGameController)
+							throw new System.Exception(typeof(T).Name + "Should never be initialized with static Getter method 'current'");
 						return Initialize() as T;
 					}
 				}
@@ -201,6 +119,8 @@ namespace RMX
 
 
 			public static T Initialize() {
+				if (typeof(T) is IGameController)
+					throw new System.Exception(typeof(T).Name + "Should never be initialized with static Getter method 'current'");
 				if (IsInitialized) 
 					return _singleton;
 				else {
@@ -219,48 +139,29 @@ namespace RMX
 				} 
 			}
 
-			/// <summary>
-			/// Gets a value indicating whether this <see cref="RMX.ASingleton`1"/> add to global listeners.
-			/// </summary>
-			/// <value><c>true</c> if add to global listeners; otherwise, <c>false</c>.</value>
-			private bool AddToGlobalListeners { 
-				get {
-					System.Type classType = typeof(T);
-					foreach (string vMethod in ListenerMethods) {
-						MethodInfo method = classType.GetMethod (vMethod);
-						if (method.DeclaringType != typeof(RMXObject)) 
-							return true;
-					}
-					return false;
-				}
-			}
-
+		
 
 			private void MainInitCheck() {
-				if (this is IGameController && _gameController == null) {
+				if (this is IGameController) {
 					Singletons._gameController = this as IGameController;
 					_gameController.Patch();
 				}
-				else if (this is ISettings && _settings == null) 
-					Singletons._settings = this as ISettings;
 			 	else if (_gameController == null)
 					Debug.LogWarning ("GameController should be initialized before " + this.GetType().Name);
-				else if (_settings == null)
-					Debug.LogWarning ("Settings should be initialized before " + this.GetType().Name);
 			}
 
 			/// <summary>
 			/// Checks whether a singleton already exists. If so, object is destroyed.
 			/// Otherwise it checks whether the EventListener methods have been overriden. If so, the object is added to the global EventListeners.
 			/// </summary>
-			protected void Awake() {
+			protected override void Awake() {
 				var message = "__new__ <color=lightblue>" + this.GetType().Name + "</color>()";
 				if (_singleton == null) {
 					DontDestroyOnLoad (gameObject);
 					_singleton = this as T;// as T;
-					if (AddToGlobalListeners)
-						Notifications.AddListener(this);
+
 					MainInitCheck();
+					base.Awake();
 				} 
 				else if (_singleton != this) {
 					if (gameObject.name == tempName) {// gameObject.name == this.GetType().Name &&

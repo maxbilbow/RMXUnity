@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace RMX {
 
@@ -13,36 +14,63 @@ namespace RMX {
 	 	Dictionary<string, object> values = new Dictionary<string, object> ();
 		List<KeyValueObserver> observers = new List<KeyValueObserver> ();
 
+
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="RMX.ASingleton`1"/> add to global listeners.
+		/// </summary>
+		/// <value><c>true</c> if add to global listeners; otherwise, <c>false</c>.</value>
+		private bool AddToGlobalListeners { 
+			get {
+				System.Type classType = this.GetType();
+				foreach (string vMethod in ListenerMethods) {
+					MethodInfo method = classType.GetMethod (vMethod);
+					if (method.DeclaringType != typeof(RMXObject)) 
+						return true;
+				}
+				return false;
+			}
+		}
+
+
+		protected virtual void Awake() {
+			if (AddToGlobalListeners)
+				NotificationCenter.AddListener(this);
+		}
+
+//		protected virtual void OnDestroy() {
+//			Notifications.RemoveListener (this);
+//		}
+
 		protected void WillBeginEvent(IEvent theEvent){
-			Notifications.EventWillStart (theEvent);
+			NotificationCenter.EventWillStart (theEvent);
 		}
 
 		protected void DidUpdateEvent(IEvent theEvent) {
-			Notifications.EventWillStart (theEvent);
+			NotificationCenter.EventWillStart (theEvent);
 		}
 
 		protected void DidFinishEvent(IEvent theEvent){
-			Notifications.EventDidEnd (theEvent);
+			NotificationCenter.EventDidEnd (theEvent);
 		}
 
 		protected void DidCauseEvent(IEvent theEvent){
-			Notifications.EventDidOccur (theEvent);
+			NotificationCenter.EventDidOccur (theEvent);
 		}
 
 		protected void WillBeginEvent(IEvent theEvent, object info){
-			Notifications.EventWillStart (theEvent, info);
+			NotificationCenter.EventWillStart (theEvent, info);
 		}
 		
 		protected void DidUpdateEvent(IEvent theEvent, object info) {
-			Notifications.EventWillStart (theEvent, info);
+			NotificationCenter.EventWillStart (theEvent, info);
 		}
 		
 		protected void DidFinishEvent(IEvent theEvent, object info){
-			Notifications.EventDidEnd (theEvent, info);
+			NotificationCenter.EventDidEnd (theEvent, info);
 		}
 
 		protected void DidCauseEvent(IEvent theEvent, object info){
-			Notifications.EventDidOccur (theEvent, info);
+			NotificationCenter.EventDidOccur (theEvent, info);
 		}
 
 		protected void WillChangeValueForKey(string key){
@@ -94,5 +122,10 @@ namespace RMX {
 		public virtual void OnEventDidStart(IEvent theEvent, object args){}
 		
 		public virtual void OnEventDidEnd(IEvent theEvent, object args){}
+		public static bool OneIn10 {
+			get {
+				return Random.Range(0,10) == 1;
+			}
+		}
 	}
 }

@@ -6,42 +6,28 @@ namespace RMX {
 
 
 
-	public class Notifications : Singletons.ASingleton<Notifications> , EventListener {
-		static Dictionary<string,EventListener> earlyListeners = new Dictionary<string,EventListener> ();
-		Dictionary<string,EventListener> lateListeners;
+	public static class NotificationCenter {
+		static Dictionary<string,EventListener> _listeners = new Dictionary<string,EventListener> ();
+
 		static Dictionary<string,EventListener> Listeners {
 			get {
-				return IsInitialized ? current.lateListeners : earlyListeners;
+				return _listeners;
 			}
 		}
 
-		static Dictionary<IEvent,EventStatus> earlyEvents = new Dictionary<IEvent,EventStatus>();
-		Dictionary<IEvent,EventStatus> events;
+		static Dictionary<IEvent,EventStatus> _events = new Dictionary<IEvent,EventStatus>();
+
 
 		static Dictionary<IEvent,EventStatus> Events {
 			get {
-				return IsInitialized ? current.events : earlyEvents;
-			}
-		}
-
-		bool _setupComplete = false;
-
-		protected override bool SetupComplete {
-			get { 
-				return _setupComplete;
+				return _events;
 			}
 		}
 
 
-		void Start() {
-//			Debug.LogWarning ("Listeners: " + Listeners.Count);
-			lateListeners = earlyListeners;
-			earlyListeners = null;
-			events = earlyEvents;
-			earlyEvents = null;
-			_setupComplete = true;
-			Debug.Log ("Listeners: " + Listeners.Count);
-		}
+
+
+
 
 		public static bool HasListener(EventListener listener) {
 			return Listeners.ContainsValue (listener);
@@ -54,7 +40,15 @@ namespace RMX {
 			Listeners[listener.GetType().Name] = listener;
 			if (Bugger.WillLog (Testing.EventCenter, listener.GetType () + " was added to Listeners ("+ Listeners.Count + ")"))
 				Debug.Log (Bugger.Last);
+//			if (Bugger.WillLog(Testing.EventCenter, "Listeners: " + Listeners.Count))
+//				Debug.Log (Bugger.Last);
 
+		}
+
+		public static void RemoveListener(EventListener listener) {
+			if (Listeners.ContainsValue (listener))
+			if (!Listeners.Remove (listener.name))
+				throw new System.Exception (listener.name + " exists but could not be removed from Listeners");
 		}
 
 		public static EventStatus StatusOf(IEvent theEvent) {

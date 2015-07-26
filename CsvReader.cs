@@ -74,6 +74,8 @@ namespace RMX
 		/// <returns></returns>
 		static public List<List<string> > Read(TextAsset file)
 		{
+			if (file == null)
+				throw new System.NullReferenceException ("Database file is null");
 			var csvLines = file.text.Split ('\n');//System.IO.File.ReadAllLines(path, encoding);
 			var csvRecords = new List<List<string> >();
 			

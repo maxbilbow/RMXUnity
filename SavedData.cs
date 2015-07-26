@@ -21,11 +21,25 @@ namespace RMX {
 		}
 		
 		static object Long(string key) {
-			return PlayerPrefs.HasKey(key) ? (long) float.Parse(PlayerPrefs.GetString (key)) : -1;
+			try {
+				return PlayerPrefs.HasKey(key) ? (long) float.Parse(PlayerPrefs.GetString (key)) : (long) -1;
+			} catch (System.Exception e){
+				Debug.LogError(e);
+				if (Bugger.WillLog(Testing.Exceptions,e.Message))
+					Debug.Log(Bugger.Last);
+				return (long) -1;
+			}
 		}
 
 		static object Double(string key) {
-			return PlayerPrefs.HasKey(key) ? (double) float.Parse(PlayerPrefs.GetString (key)) : -1;
+			try {
+				return PlayerPrefs.HasKey(key) ? (double) float.Parse(PlayerPrefs.GetString (key)) : (double) -1;
+			} catch (System.Exception e){
+				Debug.LogError(e);
+				if (Bugger.WillLog(Testing.Exceptions,e.Message))
+					Debug.Log(Bugger.Last);
+				return (double) -1;
+			}
 		}
 
 		const string TRUE = "True", FALSE = "False";
@@ -56,7 +70,6 @@ namespace RMX {
 		}
 		static object Bool(string key) {
 			return PlayerPrefs.HasKey(key) && PlayerPrefs.GetString (key) == TRUE;
-
 		}
 
 		public static void Set(object key, bool value) {
@@ -64,7 +77,14 @@ namespace RMX {
 		}
 
 		static object Int(string key) {
-			return PlayerPrefs.HasKey(key) ? int.Parse(PlayerPrefs.GetString (key)) : -1;
+			try {
+				return PlayerPrefs.HasKey(key) ? int.Parse(PlayerPrefs.GetString (key)) : (int) -1;
+			} catch (System.Exception e){
+				Debug.LogError(e);
+				if (Bugger.WillLog(Testing.Exceptions,e.Message))
+					Debug.Log(Bugger.Last);
+				return (int) -1;
+			}
 		}
 
 		public static void Set(object key, int value) {
@@ -73,7 +93,14 @@ namespace RMX {
 
 
 		public static object Float(string key) {
-			return PlayerPrefs.HasKey(key) ? float.Parse(PlayerPrefs.GetString (key)) : -1;
+			try {
+				return PlayerPrefs.HasKey(key) ? float.Parse(PlayerPrefs.GetString (key)) : (float) -1;
+			} catch (System.Exception e){
+				Debug.LogError(e);
+				if (Bugger.WillLog(Testing.Exceptions,e.Message))
+				    Debug.Log(Bugger.Last);
+				return (float) -1;
+			}
 		}
 		
 		public static void Set(object key, float value) {
