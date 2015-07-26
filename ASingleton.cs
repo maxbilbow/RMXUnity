@@ -15,15 +15,7 @@ namespace RMX
 {
 	
 
-	public interface IGameController : ISingleton {
-		void PauseGame (bool pause, object args = null);
-		void Patch();
 
-		bool DebugHUD { get; }
-		TextAsset Database { get; }
-		bool IsDebugging(string feature);
-		float MaxDisplayTime { get;}
-	}
 
 	public interface ISingleton {
 		string name { get; }
@@ -43,17 +35,13 @@ namespace RMX
 				return _gameController != null;//_gameControllerInitialized;
 			}
 		}
-//		
+		public interface IDebugHUD
+		{
+		}
 
 		static IGameController _gameController;
 	 	public static IGameController GameController {
 			get{ 
-				return _gameController;
-			}
-		}
-
-		public static IGameController Settings {
-			get {
 				return _gameController;
 			}
 		}
@@ -87,13 +75,7 @@ namespace RMX
 					return _gameController;
 				}
 			}
-	
-			protected virtual IGameController settings {
-				get {
-					return _gameController;
-				}
-			}
-	
+  	
 			public static T current {
 				get {
 					if (IsInitialized) {
@@ -101,6 +83,8 @@ namespace RMX
 					} else {
 						if (typeof(T) is IGameController)
 							throw new System.Exception(typeof(T).Name + "Should never be initialized with static Getter method 'current'");
+						if (typeof(T) is IDebugHUD)
+							throw new System.Exception("DebugHUD should not be accessed through 'ASingleton.current' as a Singleton");
 						return Initialize() as T;
 					}
 				}
@@ -123,8 +107,9 @@ namespace RMX
 				if (IsInitialized) 
 					return _singleton;
 				else {
-					var aSingleton = new GameObject (tempName).AddComponent<T> ();
-					if ((aSingleton as ISingleton).Destroyed) {
+					var go = new GameObject(tempName);
+					ISingleton aSingleton = go.AddComponent<T> ();
+					if (aSingleton == null || (aSingleton as ISingleton).Destroyed) {
 						return null;
 					}
 					aSingleton.gameObject.name = aSingleton.GetType ().Name;
@@ -134,7 +119,7 @@ namespace RMX
 						aSingleton.gameObject.transform.SetParent (parent.transform);
 					}
 	
-					return aSingleton;
+					return aSingleton as T;
 				} 
 			}
 
@@ -149,11 +134,21 @@ namespace RMX
 					Debug.LogWarning ("GameController should be initialized before " + this.GetType().Name);
 			}
 
+			protected virtual bool WillInitialize {
+				get {
+					return true;
+				}
+
+			}
 			/// <summary>
 			/// Checks whether a singleton already exists. If so, object is destroyed.
 			/// Otherwise it checks whether the EventListener methods have been overriden. If so, the object is added to the global EventListeners.
 			/// </summary>
 			protected override void Awake() {
+				if (!WillInitialize) {
+					_destroyed = true;
+					return;
+				}
 				var message = "__new__ <color=lightblue>" + this.GetType().Name + "</color>()";
 				if (_singleton == null) {
 					DontDestroyOnLoad (gameObject);
@@ -174,7 +169,7 @@ namespace RMX
 						Destroy(this);
 					}
 				}
-				if (Bugger.WillLog (Testing.Singletons, message))
+				if (Bugger.WillLog (RMXTests.Singletons, message))
 					Debug.Log (Bugger.Last);
 				_isInitialized = true;
 			}

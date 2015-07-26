@@ -41,35 +41,35 @@ namespace RMX {
 //			Notifications.RemoveListener (this);
 //		}
 
-		protected void WillBeginEvent(IEvent theEvent){
+		protected void WillBeginEvent(System.Enum theEvent){
 			NotificationCenter.EventWillStart (theEvent);
 		}
 
-		protected void DidUpdateEvent(IEvent theEvent) {
+		protected void DidUpdateEvent(System.Enum theEvent) {
 			NotificationCenter.EventWillStart (theEvent);
 		}
 
-		protected void DidFinishEvent(IEvent theEvent){
+		protected void DidFinishEvent(System.Enum theEvent){
 			NotificationCenter.EventDidEnd (theEvent);
 		}
 
-		protected void DidCauseEvent(IEvent theEvent){
+		protected void DidCauseEvent(System.Enum theEvent){
 			NotificationCenter.EventDidOccur (theEvent);
 		}
 
-		protected void WillBeginEvent(IEvent theEvent, object info){
+		protected void WillBeginEvent(System.Enum theEvent, object info){
 			NotificationCenter.EventWillStart (theEvent, info);
 		}
 		
-		protected void DidUpdateEvent(IEvent theEvent, object info) {
+		protected void DidUpdateEvent(System.Enum theEvent, object info) {
 			NotificationCenter.EventWillStart (theEvent, info);
 		}
 		
-		protected void DidFinishEvent(IEvent theEvent, object info){
+		protected void DidFinishEvent(System.Enum theEvent, object info){
 			NotificationCenter.EventDidEnd (theEvent, info);
 		}
 
-		protected void DidCauseEvent(IEvent theEvent, object info){
+		protected void DidCauseEvent(System.Enum theEvent, object info){
 			NotificationCenter.EventDidOccur (theEvent, info);
 		}
 
@@ -117,11 +117,11 @@ namespace RMX {
 			"OnEventDidEnd"
 		};
 
-		public virtual void OnEvent(IEvent theEvent, object args) {}
+		public virtual void OnEvent(System.Enum theEvent, object args) {}
 		
-		public virtual void OnEventDidStart(IEvent theEvent, object args){}
+		public virtual void OnEventDidStart(System.Enum theEvent, object args){}
 		
-		public virtual void OnEventDidEnd(IEvent theEvent, object args){}
+		public virtual void OnEventDidEnd(System.Enum theEvent, object args){}
 		public static bool OneIn10 {
 			get {
 				return Random.Range(0,10) == 1;

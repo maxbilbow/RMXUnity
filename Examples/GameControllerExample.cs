@@ -3,9 +3,14 @@ using System.Collections;
 using RMX;
 
 namespace RMX.Examples {
+	public enum MyTests {
+		CustomTest
+	}
 	public class GameControllerExample : AGameController<GameControllerExample> {
 
 
+
+		public bool DebugCustomTest;
 		/// <summary>
 		/// Do at beginnig of Start block
 		/// </summary>
@@ -48,6 +53,18 @@ namespace RMX.Examples {
 		/// </summary>
 		public override void Patch () {
 
+		}
+
+		/// <summary>
+		/// Determines whether this instance is debugging the specified feature.
+		/// </summary>
+		/// <returns><c>true</c> if this instance is debugging the specified feature; otherwise, <c>false</c>.</returns>
+		/// <param name="feature">Feature.</param>
+		public override bool IsDebugging(System.Enum feature){
+			if (feature.Equals( MyTests.CustomTest))
+				return DebugCustomTest;
+			else
+				return base.IsDebugging (feature);
 		}
 
 		/// <summary>

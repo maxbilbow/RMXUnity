@@ -25,7 +25,7 @@ namespace RMX {
 				return PlayerPrefs.HasKey(key) ? (long) float.Parse(PlayerPrefs.GetString (key)) : (long) -1;
 			} catch (System.Exception e){
 				Debug.LogError(e);
-				if (Bugger.WillLog(Testing.Exceptions,e.Message))
+				if (Bugger.WillLog(RMXTests.Exceptions,e.Message))
 					Debug.Log(Bugger.Last);
 				return (long) -1;
 			}
@@ -36,7 +36,7 @@ namespace RMX {
 				return PlayerPrefs.HasKey(key) ? (double) float.Parse(PlayerPrefs.GetString (key)) : (double) -1;
 			} catch (System.Exception e){
 				Debug.LogError(e);
-				if (Bugger.WillLog(Testing.Exceptions,e.Message))
+				if (Bugger.WillLog(RMXTests.Exceptions,e.Message))
 					Debug.Log(Bugger.Last);
 				return (double) -1;
 			}
@@ -81,7 +81,7 @@ namespace RMX {
 				return PlayerPrefs.HasKey(key) ? int.Parse(PlayerPrefs.GetString (key)) : (int) -1;
 			} catch (System.Exception e){
 				Debug.LogError(e);
-				if (Bugger.WillLog(Testing.Exceptions,e.Message))
+				if (Bugger.WillLog(RMXTests.Exceptions,e.Message))
 					Debug.Log(Bugger.Last);
 				return (int) -1;
 			}
@@ -97,7 +97,7 @@ namespace RMX {
 				return PlayerPrefs.HasKey(key) ? float.Parse(PlayerPrefs.GetString (key)) : (float) -1;
 			} catch (System.Exception e){
 				Debug.LogError(e);
-				if (Bugger.WillLog(Testing.Exceptions,e.Message))
+				if (Bugger.WillLog(RMXTests.Exceptions,e.Message))
 				    Debug.Log(Bugger.Last);
 				return (float) -1;
 			}
